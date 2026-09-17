@@ -51,8 +51,7 @@ body, #background {
 	height: 100%;
 	object-fit: cover;
 	z-index: 0;
-	/* filter: grayscale(50%) contrast(200%) brightness(80%); */
-	filter: grayscale(50%) sepia(100%) hue-rotate(-30deg) contrast(140%) saturate(350%) brightness(80%);
+	filter: grayscale(100%) contrast(200%) brightness(80%);
 }
 
 a* {
