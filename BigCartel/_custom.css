@@ -1,0 +1,30 @@
+/* Yumla custom css = 'Neat v2.18.5' theme */
+header .navigation {
+  visibility: hidden;
+}
+header.background_overlay .store-logo {
+  filter: grayscale(100%) contrast(200%) brightness(0%);
+}
+#navigation-modal{
+  font-family: var(--header-font);
+  font-weight: bolder;
+}
+.welcome_button,
+button, 
+input[type], 
+textarea {
+  border-radius: 0.5rem;
+}
+textarea {
+  border-bottom-right-radius: 0;
+}
+a.welcome_button:hover {
+  opacity: 0.8;
+}
+footer {
+  background-color: var(--header-background-color);
+  border-top: 1px solid var(--border-color);
+  font-size: 80%;
+  line-height: 80%;
+}
+/* Yumla custom css END */

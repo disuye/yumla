@@ -1,0 +1,165 @@
+<!--Yumla custom BODY code -->
+<script>
+//  Sync product page image carousel AND drop-down menu. 
+// Based on default 'Neat v2.18.5' theme AND Printful images.
+(function () {
+  var DEBUG = false;                 // true = log matching to the browser console (F12)
+  var PREFERRED_WORDS = ['front'];   // tie-breaker if a variant has several images
+
+  var SELECTS = 'select.product_option_group';
+  var THUMBS = '.product-thumbnails--list .product-thumbnails--change-slide';
+  var THUMB_LIST = '.product-thumbnails--list';
+  var CAROUSEL = '.product-carousel';
+
+  function log() {
+    if (DEBUG) console.log.apply(console, ['[variant-img]'].concat([].slice.call(arguments)));
+  }
+
+  function tokens(s, dropHash) {
+    try { s = decodeURIComponent(s); } catch (e) {}
+    var t = (s || '').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    if (dropHash && t.length) {
+      var last = t[t.length - 1];
+      if (/^[a-f0-9]{8,}$/.test(last) && /\d/.test(last)) t.pop();
+    }
+    return t;
+  }
+
+  function fileTokens(img) {
+    var src = img.getAttribute('src') || '';
+    var name = src.split('?')[0].split('/').pop().replace(/\.[a-z0-9]+$/i, '');
+    return tokens(name, true);
+  }
+
+  function hasRun(hay, needle) {
+    for (var i = 0; i + needle.length <= hay.length; i++) {
+      var ok = true;
+      for (var j = 0; j < needle.length; j++) {
+        if (hay[i + j] !== needle[j]) { ok = false; break; }
+      }
+      if (ok) return true;
+    }
+    return false;
+  }
+
+  function cmp(a, b) {
+    for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) return a[i] - b[i];
+    return 0;
+  }
+
+  function usable(v) { return v.length && v.join('').length >= 2; }  // skips "S", "M", "L"...
+
+  function init() {
+    var selects = [].slice.call(document.querySelectorAll(SELECTS));
+    var thumbs = [].slice.call(document.querySelectorAll(THUMBS));
+    if (!selects.length || thumbs.length < 2) return;
+
+    var root = document.querySelector(CAROUSEL);
+    var list = document.querySelector(THUMB_LIST);
+
+    var items = thumbs.map(function (btn, i) {
+      var img = btn.querySelector('img');
+      return { btn: btn, li: btn.closest('.product-thumbnails--item'), index: i, toks: img ? fileTokens(img) : [] };
+    });
+
+    var syncing = false;      // true while we change a dropdown ourselves (prevents feedback loop)
+    var suppress = false;     // true briefly after Reset
+    var lastActive = activeIndex();
+
+    /* ---------- dropdown -> carousel ---------- */
+
+    function findImage(variantName) {
+      var v = tokens(variantName, false);
+      if (!usable(v)) return null;
+      var best = null, bestScore = null;
+      items.forEach(function (it) {
+        if (!hasRun(it.toks, v)) return;
+        var pref = PREFERRED_WORDS.some(function (w) { return it.toks.indexOf(w) !== -1; }) ? 1 : 0;
+        var score = [pref, -it.toks.length, -it.index];
+        if (!bestScore || cmp(score, bestScore) > 0) { best = it; bestScore = score; }
+      });
+      return best;
+    }
+
+    function goTo(it) {
+      it.btn.click();
+      setTimeout(function () {
+        if (it.li && it.li.classList.contains('is-active')) return;
+        if (root && root.splide && typeof root.splide.go === 'function') {
+          log('fallback: splide.go(' + it.index + ')');
+          root.splide.go(it.index);
+        }
+      }, 400);
+    }
+
+    selects.forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        if (syncing) return;   // change came from the carousel, not the user
+        var opt = sel.options[sel.selectedIndex];
+        var name = opt && (opt.getAttribute('data-name') || opt.textContent);
+        var match = findImage(name);
+        log('dropdown:', name, '→', match ? ('image #' + (match.index + 1)) : 'no match');
+        if (match) goTo(match);
+      });
+    });
+
+    /* ---------- carousel -> dropdown ---------- */
+
+    function activeIndex() {
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].li && items[i].li.classList.contains('is-active')) return i;
+      }
+      return -1;
+    }
+
+    function findOption(sel, it) {
+      var best = null, bestLen = 0;
+      [].forEach.call(sel.options, function (opt) {
+        if (!opt.value) return;   // skip placeholder
+        var v = tokens(opt.getAttribute('data-name') || opt.textContent, false);
+        if (usable(v) && hasRun(it.toks, v) && v.length > bestLen) { best = opt; bestLen = v.length; }
+      });
+      return best;
+    }
+
+    function syncFromCarousel() {
+      var idx = activeIndex();
+      if (idx === -1 || idx === lastActive) return;
+      var first = lastActive === -1;   // theme just initialised the carousel: don't touch the dropdowns
+      lastActive = idx;
+      if (first || suppress) return;
+
+      var it = items[idx];
+      selects.forEach(function (sel) {
+        var opt = findOption(sel, it);
+        if (!opt || sel.value === opt.value) return;
+        log('carousel: image #' + (idx + 1) + ' → ' + sel.getAttribute('data-group-name') + ' = ' + opt.value);
+        syncing = true;
+        sel.value = opt.value;
+        // fire a normal change event so the theme updates stock / button state; our own handler ignores it
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        syncing = false;
+      });
+    }
+
+    if (list && window.MutationObserver) {
+      new MutationObserver(syncFromCarousel).observe(list, {
+        attributes: true, subtree: true, attributeFilter: ['class', 'aria-current']
+      });
+    }
+
+    /* ---------- reset ---------- */
+
+    var reset = document.querySelector('.reset-selection-button');
+    if (reset) reset.addEventListener('click', function () {
+      suppress = true;               // don't let the jump back to image 1 re-select a variant
+      goTo(items[0]);
+      setTimeout(function () { suppress = false; }, 150);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+<!-- Yumla custom BODY code END -->
