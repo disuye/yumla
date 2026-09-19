@@ -1,5 +1,6 @@
 /* Yumla custom css = 'Neat v2.18.5' theme */
-header .navigation {
+header .navigation,
+.splide__pagination__page {
   visibility: hidden;
 }
 header.background_overlay .store-logo {
