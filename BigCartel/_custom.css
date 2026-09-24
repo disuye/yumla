@@ -12,6 +12,20 @@
   opacity: 0.7;
 } 
 
+/* body brand border */
+
+#orangepop {
+  display: block;
+  z-index: 9999; 
+  /* header = 99, modal = 999 */
+  position: fixed;
+  top: 0; left: 0;
+  padding: 0; margin: 0;
+  width: 3px;
+  height: 120vh;
+  background-color: rgba(255,103,0,0.8);
+}
+
 /* minimalist header & carousel */
 header .navigation,
 .splide__pagination__page {
