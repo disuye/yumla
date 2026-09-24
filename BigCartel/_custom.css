@@ -18,6 +18,16 @@ header .navigation,
   visibility: hidden;
 }
 
+header .open-search-button,
+header .cart-link {
+  opacity: 0.5;
+}
+
+header .open-search-button:hover,
+header .cart-link:hover {
+  opacity: 1.0;
+}
+
 /* make logo auto-desaturate */
 header.background_overlay .store-logo {
   filter: grayscale(100%) contrast(200%) brightness(0%);
