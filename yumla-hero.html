@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>yumla</title>
+  <link rel="icon" href="https://assets.bigcartel.com/account_favicons/265167/yumla-fav.png?auto=format&fit=max&h=32&w=32" type="image/png">
+
+  <!-- Fonts (same request the original page makes): Doto = pixel-dot display, Old Standard TT = serif UI/body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Doto:300,400,500,700|Old+Standard+TT:400,700&display=swap">
+
+  <!-- Splide -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide-core.min.css">
+
+  <style>
+    :root {
+      --header-font: "Doto", monospace;
+      --body-font: "Old Standard TT", Georgia, serif;
+      --accent: #FF6700;            /* theme link-hover / button-hover orange */
+      --overlay: rgba(0, 0, 0, .55); /* darkening layer over the photos */
+      --header-pad-x: clamp(1rem, 4vw, 2.5rem);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: var(--body-font);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- Header: logo left, utility nav right, floated over the hero ---------- */
+    .header {
+      position: absolute;
+      inset: 0 0 auto 0;
+      z-index: 10;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 1.5rem var(--header-pad-x);
+    }
+    .logo a { display: block; line-height: 0; }
+    .store-logo {
+      height: clamp(52px, 8vw, 72px);   /* logo is ~105px wide in the screenshot */
+      width: auto;
+      display: block;
+    }
+
+    .utility ul {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      align-items: center;
+      gap: clamp(1.25rem, 3.5vw, 2.5rem);
+      /* align icon row with the vertical middle of the logo */
+      height: clamp(52px, 8vw, 72px);
+    }
+    .utility a, .utility button {
+      color: #fff;
+      text-decoration: none;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      font-family: var(--body-font);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: .04em;
+    }
+    .utility a:hover, .utility button:hover { color: var(--accent); }
+    .utility svg { display: block; fill: currentColor; }
+    .open-search-button svg { width: 20px; height: 20px; }
+    .cart-link svg { width: 20px; height: 20px; }
+    .header-divider { margin: 0 .1rem; font-weight: 400; }
+    .currency_code { margin-right: .3em; }
+    .open-mobile-navigation svg { width: 28px; height: 18px; }
+
+    /* ---------- Hero: Splide fade carousel + overlay + centred text ---------- */
+    .welcome_image {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+    }
+    .home-carousel,
+    .home-carousel .splide__track,
+    .home-carousel .splide__list,
+    .home-carousel .splide__slide { height: 100%; }
+    .home-carousel .splide__slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* original theme hides the dot pagination */
+    .splide__pagination { display: none; }
+
+    .welcome_overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--overlay);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .welcome_text {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;   /* sits just below centre in the screenshot */
+      text-align: center;
+      margin-top: -1rem;
+    }
+    .welcome-subheader {
+      font-family: var(--header-font);
+      font-weight: 400;
+      text-transform: uppercase;
+      font-size: clamp(.75rem, 1.5vw, 1.1rem);
+      letter-spacing: .3em;
+      margin-bottom: 0.4rem;
+    }
+    .welcome-header {
+      font-family: var(--header-font);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: clamp(1.25rem, 3.7vw, 2.75rem);
+      line-height: 1;
+      letter-spacing: .28em;
+      word-spacing: .15em;
+      margin-bottom: 1.5rem;
+    }
+    .welcome_button {
+      /* display: inline-block; */
+      display: none;
+      color: #fff;
+      background: transparent;
+      border: 1px solid #fff;
+      border-radius: .5rem;     
+      padding: 1rem 1.6rem;
+      font-family: var(--body-font);
+      font-size: 1rem;
+      letter-spacing: .04em;
+      text-decoration: none;
+      transition: opacity .2s ease;
+    }
+    .welcome_button:hover { opacity: .8; }
+    .welcome_image .welcome-subheader {
+      font-family: var(--header-font);
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      line-height: 1.25em;
+      margin-right: -0.2em;
+      padding: 0 16px 24px 16px;
+      text-transform: uppercase;
+      font-size: 16px;
+    }
+    @media screen and (min-width: 320px)  { .welcome_image .welcome-subheader { font-size: calc(16px + 4 * ((100vw - 320px) / 880)); } }
+    @media screen and (min-width: 1200px) { .welcome_image .welcome-subheader { font-size: 20px; } }
+    @media only screen and (max-width: 800px) { .welcome_image .welcome-subheader { letter-spacing: 0.1em; margin-right: -0.1em; } }
+ 
+    .welcome_image .welcome-header {
+      font-family: var(--header-font);
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      line-height: 1.3em;
+      margin: 0 -0.2em 24px 0;
+      text-transform: uppercase;
+      font-size: 20px;
+    } 
+    @media screen and (min-width: 320px)  { .welcome_image .welcome-header { font-size: calc(20px + 40 * ((100vw - 320px) / 880)); } }
+    @media screen and (min-width: 1200px) { .welcome_image .welcome-header { font-size: 60px; } }
+    @media only screen and (max-width: 800px) {
+      .welcome_image .welcome-header { letter-spacing: 0.1em; padding: 0 16px; white-space: normal; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="logo image">
+      <!-- <a href="/" title="yumla"> -->
+        <img class="store-logo" alt="yumla Home"
+             src="https://assets.bigcartel.com/theme_images/167295852/yumla-w.png?auto=format&fit=max&h=195"
+             srcset="https://assets.bigcartel.com/theme_images/167295852/yumla-w.png?auto=format&fit=max&h=390 2x, https://assets.bigcartel.com/theme_images/167295852/yumla-w.png?auto=format&fit=max&h=195 1x">
+      <!-- </a> -->
+    </div>
+
+  </header>
+
+  <div class="welcome_image">
+    <section class="slideshow home-carousel splide" role="group" aria-label="Home image carousel">
+      <div class="carousel splide__track">
+        <ul class="splide__list">
+          <li class="splide__slide">
+            <img alt="Slideshow image 1" src="https://assets.bigcartel.com/theme_images/167322099/yumla_anon-01.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322099/yumla_anon-01.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322099/yumla_anon-01.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322099/yumla_anon-01.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" fetchpriority="high">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 2" src="https://assets.bigcartel.com/theme_images/167322102/yumla_anon-02.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322102/yumla_anon-02.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322102/yumla_anon-02.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322102/yumla_anon-02.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 3" src="https://assets.bigcartel.com/theme_images/167322111/yumla_anon-03.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322111/yumla_anon-03.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322111/yumla_anon-03.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322111/yumla_anon-03.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 4" src="https://assets.bigcartel.com/theme_images/167322108/yumla_anon-04.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322108/yumla_anon-04.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322108/yumla_anon-04.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322108/yumla_anon-04.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 5" src="https://assets.bigcartel.com/theme_images/167322129/yumla_anon-06.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322129/yumla_anon-06.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322129/yumla_anon-06.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322129/yumla_anon-06.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 6" src="https://assets.bigcartel.com/theme_images/167322123/yumla_anon-07.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322123/yumla_anon-07.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322123/yumla_anon-07.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322123/yumla_anon-07.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 7" src="https://assets.bigcartel.com/theme_images/167322114/yumla_anon-08.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322114/yumla_anon-08.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322114/yumla_anon-08.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322114/yumla_anon-08.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 8" src="https://assets.bigcartel.com/theme_images/167322120/yumla_anon-09.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322120/yumla_anon-09.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322120/yumla_anon-09.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322120/yumla_anon-09.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 9" src="https://assets.bigcartel.com/theme_images/167322126/yumla_anon-11.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322126/yumla_anon-11.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322126/yumla_anon-11.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322126/yumla_anon-11.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 10" src="https://assets.bigcartel.com/theme_images/167322132/yumla_anon-12.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322132/yumla_anon-12.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322132/yumla_anon-12.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322132/yumla_anon-12.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 11" src="https://assets.bigcartel.com/theme_images/167322117/yumla_anon-10.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322117/yumla_anon-10.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322117/yumla_anon-10.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322117/yumla_anon-10.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 12" src="https://assets.bigcartel.com/theme_images/167322138/yumla_anon-17.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322138/yumla_anon-17.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322138/yumla_anon-17.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322138/yumla_anon-17.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 13" src="https://assets.bigcartel.com/theme_images/167322153/yumla_anon-18.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322153/yumla_anon-18.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322153/yumla_anon-18.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322153/yumla_anon-18.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 14" src="https://assets.bigcartel.com/theme_images/167322144/yumla_anon-16.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322144/yumla_anon-16.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322144/yumla_anon-16.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322144/yumla_anon-16.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 15" src="https://assets.bigcartel.com/theme_images/167322135/yumla_anon-14.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322135/yumla_anon-14.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322135/yumla_anon-14.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322135/yumla_anon-14.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 16" src="https://assets.bigcartel.com/theme_images/167322150/yumla_anon-19.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322150/yumla_anon-19.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322150/yumla_anon-19.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322150/yumla_anon-19.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 17" src="https://assets.bigcartel.com/theme_images/167322147/yumla_anon-20.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322147/yumla_anon-20.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322147/yumla_anon-20.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322147/yumla_anon-20.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 18" src="https://assets.bigcartel.com/theme_images/167322156/yumla_anon-22.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322156/yumla_anon-22.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322156/yumla_anon-22.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322156/yumla_anon-22.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 19" src="https://assets.bigcartel.com/theme_images/167322159/yumla_anon-15.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322159/yumla_anon-15.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322159/yumla_anon-15.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322159/yumla_anon-15.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 20" src="https://assets.bigcartel.com/theme_images/167322162/yumla_anon-21.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322162/yumla_anon-21.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322162/yumla_anon-21.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322162/yumla_anon-21.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 21" src="https://assets.bigcartel.com/theme_images/167322192/yumla_anon-13.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322192/yumla_anon-13.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322192/yumla_anon-13.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322192/yumla_anon-13.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 22" src="https://assets.bigcartel.com/theme_images/167322195/yumla_anon-24.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322195/yumla_anon-24.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322195/yumla_anon-24.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322195/yumla_anon-24.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 23" src="https://assets.bigcartel.com/theme_images/167322198/yumla_anon-25.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322198/yumla_anon-25.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322198/yumla_anon-25.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322198/yumla_anon-25.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 24" src="https://assets.bigcartel.com/theme_images/167322201/yumla_anon-26.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322201/yumla_anon-26.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322201/yumla_anon-26.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322201/yumla_anon-26.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 25" src="https://assets.bigcartel.com/theme_images/167322204/yumla_anon-28.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322204/yumla_anon-28.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322204/yumla_anon-28.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322204/yumla_anon-28.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 26" src="https://assets.bigcartel.com/theme_images/167322210/yumla_anon-27.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322210/yumla_anon-27.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322210/yumla_anon-27.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322210/yumla_anon-27.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 27" src="https://assets.bigcartel.com/theme_images/167322216/yumla_anon-32.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322216/yumla_anon-32.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322216/yumla_anon-32.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322216/yumla_anon-32.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 28" src="https://assets.bigcartel.com/theme_images/167322207/yumla_anon-29.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322207/yumla_anon-29.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322207/yumla_anon-29.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322207/yumla_anon-29.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 29" src="https://assets.bigcartel.com/theme_images/167322219/yumla_anon-33.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322219/yumla_anon-33.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322219/yumla_anon-33.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322219/yumla_anon-33.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 30" src="https://assets.bigcartel.com/theme_images/167322213/yumla_anon-34.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322213/yumla_anon-34.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322213/yumla_anon-34.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322213/yumla_anon-34.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 31" src="https://assets.bigcartel.com/theme_images/167322222/yumla_anon-30.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322222/yumla_anon-30.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322222/yumla_anon-30.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322222/yumla_anon-30.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 32" src="https://assets.bigcartel.com/theme_images/167322228/yumla_anon-36.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322228/yumla_anon-36.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322228/yumla_anon-36.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322228/yumla_anon-36.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 33" src="https://assets.bigcartel.com/theme_images/167322234/yumla_anon-40.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322234/yumla_anon-40.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322234/yumla_anon-40.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322234/yumla_anon-40.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 34" src="https://assets.bigcartel.com/theme_images/167322243/yumla_anon-39.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322243/yumla_anon-39.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322243/yumla_anon-39.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322243/yumla_anon-39.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 35" src="https://assets.bigcartel.com/theme_images/167322237/yumla_anon-38.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322237/yumla_anon-38.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322237/yumla_anon-38.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322237/yumla_anon-38.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 36" src="https://assets.bigcartel.com/theme_images/167322231/yumla_anon-35.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322231/yumla_anon-35.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322231/yumla_anon-35.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322231/yumla_anon-35.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 37" src="https://assets.bigcartel.com/theme_images/167322240/yumla_anon-37.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322240/yumla_anon-37.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322240/yumla_anon-37.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322240/yumla_anon-37.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 38" src="https://assets.bigcartel.com/theme_images/167322249/yumla_anon-43.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322249/yumla_anon-43.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322249/yumla_anon-43.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322249/yumla_anon-43.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 39" src="https://assets.bigcartel.com/theme_images/167322255/yumla_anon-41.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322255/yumla_anon-41.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322255/yumla_anon-41.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322255/yumla_anon-41.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 40" src="https://assets.bigcartel.com/theme_images/167322258/yumla_anon-44.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322258/yumla_anon-44.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322258/yumla_anon-44.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322258/yumla_anon-44.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 41" src="https://assets.bigcartel.com/theme_images/167322261/yumla_anon-45.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322261/yumla_anon-45.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322261/yumla_anon-45.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322261/yumla_anon-45.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 42" src="https://assets.bigcartel.com/theme_images/167322273/yumla_anon-46.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322273/yumla_anon-46.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322273/yumla_anon-46.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322273/yumla_anon-46.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 43" src="https://assets.bigcartel.com/theme_images/167322252/yumla_anon-42.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322252/yumla_anon-42.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322252/yumla_anon-42.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322252/yumla_anon-42.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 44" src="https://assets.bigcartel.com/theme_images/167322270/yumla_anon-48.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322270/yumla_anon-48.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322270/yumla_anon-48.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322270/yumla_anon-48.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 45" src="https://assets.bigcartel.com/theme_images/167322276/yumla_anon-49.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322276/yumla_anon-49.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322276/yumla_anon-49.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322276/yumla_anon-49.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+          <li class="splide__slide">
+            <img alt="Slideshow image 46" src="https://assets.bigcartel.com/theme_images/167322279/yumla_anon-47.jpg?auto=format&fit=max&w=1400"
+                 srcset="https://assets.bigcartel.com/theme_images/167322279/yumla_anon-47.jpg?auto=format&fit=max&w=800 800w, https://assets.bigcartel.com/theme_images/167322279/yumla_anon-47.jpg?auto=format&fit=max&w=1400 1400w, https://assets.bigcartel.com/theme_images/167322279/yumla_anon-47.jpg?auto=format&fit=max&w=2000 2000w"
+                 sizes="100vw" loading="lazy">
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="welcome_overlay"></div>
+    <div class="welcome_text">
+      <div class="welcome-subheader">Est. Hong Kong 2003</div>
+      <div class="welcome-header">Do you Yumla?</div>
+      <a href="#" class="welcome_button">Yes 係</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+  <script>
+    // Mirrors the theme's options: homepageSlideshowTransition "fade", autoplay on, speed 3000 ms
+    const splide = new Splide('.home-carousel', {
+      type: 'fade',
+      rewind: true,
+      autoplay: true,
+      interval: 3000,
+      speed: 1200,
+      arrows: false,
+      pagination: false,
+      pauseOnHover: false,
+      pauseOnFocus: false,
+      drag: false,
+    }).mount();
+
+    // "Yes 係" button: theme option welcomeButtonBehavior = "scroll" (scrolls to the content below the hero)
+    document.querySelector('.welcome_button').addEventListener('click', (e) => {
+      e.preventDefault();
+      const next = document.querySelector('main') || document.querySelector('.welcome_image').nextElementSibling;
+      if (next) next.scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

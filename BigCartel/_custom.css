@@ -1,25 +1,49 @@
 /* Yumla custom css = 'Neat v2.18.5' theme */
+
+/* TESTING: compact thumbnail info */
+.product-list-thumb-price,
+.product-list-thumb-options-description {
+  display: inline-block;
+}
+.product-list-thumb-options-description:before {
+  content:"·";
+}
+.product-list-thumb-options-description {
+  opacity: 0.7;
+} 
+
+/* minimalist header & carousel */
 header .navigation,
 .splide__pagination__page {
   visibility: hidden;
 }
+
+/* make logo auto-desaturate */
 header.background_overlay .store-logo {
   filter: grayscale(100%) contrast(200%) brightness(0%);
 }
+
+/* change mobile modal menu font */
 #navigation-modal {
   font-family: var(--header-font);
   font-weight: bolder;
   letter-spacing: 0.1rem;
 }
+
+/* footer and modal menu link appearance */
 footer a:hover,
 #navigation-modal a:hover {
   background-color: rgba(255,103,0,0.05);
   color: #FF6700 !important;
   text-decoration: none !important;
 }
+
+/* change product thumbnail outline */
 :root {
   --thumbnail-active-color: rgba(0,0,0,0.05);
 }
+
+/* global button appearance */
 .welcome_button,
 button, 
 input[type], 
@@ -32,10 +56,13 @@ textarea {
 a.welcome_button:hover {
   opacity: 0.8;
 }
+
+/* minimalist footer style */
 footer {
   background-color: var(--header-background-color);
   border-top: 1px solid var(--border-color);
   font-size: 80%;
   line-height: 80%;
 }
+
 /* Yumla custom css END */
