@@ -1,5 +1,27 @@
 <!--Yumla custom BODY code -->
+
+<!-- thin orange line, screen left-->
 <div id="orangepop"></div>
+
+<!-- back button on product pages -->
+<a href="/" class="backbutton" data-back><-</a>
+
+<script>
+  const target = document.querySelector('.product-container h1'); // your existing div
+  document.querySelectorAll('[data-back]').forEach(link => {
+    target?.prepend(link);
+
+    link.addEventListener('click', e => {
+      const cameFromThisSite =
+        document.referrer && new URL(document.referrer).origin === location.origin;
+
+      if (cameFromThisSite) {
+        e.preventDefault();
+        history.back();
+      }
+    });
+  });
+</script>
 
 <!-- product image + downdrop connect -->
 <script>

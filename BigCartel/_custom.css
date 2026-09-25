@@ -1,17 +1,5 @@
 /* Yumla custom css = 'Neat v2.18.5' theme */
 
-/* TESTING: compact thumbnail info */
-.product-list-thumb-price,
-.product-list-thumb-options-description {
-  display: inline-block;
-}
-.product-list-thumb-options-description:before {
-  content:"·";
-}
-.product-list-thumb-options-description {
-  opacity: 0.7;
-} 
-
 /* body brand border */
 
 #orangepop {
@@ -52,6 +40,24 @@ header.background_overlay .store-logo {
   font-family: var(--header-font);
   font-weight: bolder;
   letter-spacing: 0.1rem;
+}
+
+/* compact thumbnail info */
+.product-list-thumb-price,
+.product-list-thumb-options-description {
+  display: inline-block;
+}
+.product-list-thumb-options-description:before {
+  content:"·";
+}
+.product-list-thumb-options-description {
+  opacity: 0.7;
+} 
+
+/* back button on product pages */
+
+.backbutton {
+  float: left;
 }
 
 /* footer and modal menu link appearance */
