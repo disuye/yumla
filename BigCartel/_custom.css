@@ -14,6 +14,13 @@
   background-color: rgba(255,103,0,0.8);
 }
 
+/* TAB keyboard control styling */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  border-radius: 0.5rem;
+}
+
 /* minimalist header & carousel */
 header .navigation,
 .splide__pagination__page {
@@ -93,6 +100,14 @@ footer {
   border-top: 1px solid var(--border-color);
   font-size: 80%;
   line-height: 80%;
+}
+
+/* desaturate Cart thumbnail images; workaround for confusing UI/UX mismatch image~variant */
+
+.cart-item-image-link {
+  filter: grayscale(100%) contrast(103%) brightness(105%);
+  background-color: lightgray;
+  border-radius: 0.5rem;
 }
 
 /* Yumla custom css END */
