@@ -93,6 +93,11 @@ textarea {
 a.welcome_button:hover {
   opacity: 0.8;
 }
+button {
+  font-family: monospace;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
 
 /* minimalist footer style */
 footer {
