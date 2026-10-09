@@ -64,6 +64,11 @@ header.background_overlay .store-logo {
 /* back button on product pages */
 
 .backbutton {
+  display: none;
+}
+
+#product .backbutton {
+  display: block;
   float: left;
 }
 
@@ -93,11 +98,11 @@ textarea {
 a.welcome_button:hover {
   opacity: 0.8;
 }
-button {
+/*button {
   font-family: monospace;
   font-weight: 500;
   font-size: 1.2rem;
-}
+}*/
 
 /* minimalist footer style */
 footer {
